@@ -172,11 +172,8 @@ navigator.mediaDevices.getUserMedia({video: true, audio: false})
             const label = document.createElement('label');
             const img = document.createElement('img');
             const sticker = document.createElement('img');
-
            
-            //Set img src
-
-           
+            //Set img src   
             input.setAttribute('type','radio');
             input.setAttribute('id',id);
             input.setAttribute('name','radio_name');

@@ -11,11 +11,12 @@
         public function index(){
             //Get posts
             $posts = $this->postModel->getPosts();
-            //$likes = $this->postModel->getLikes();
+           // $comments = $this->postModel->getMessages();
             $data = [
-                'posts' => $posts,
-                //'likes' => $likes
+                'posts' => $posts
+                //'comments' => $comments
             ];
+
 
             $this->view('posts/index',$data);
         }
@@ -142,8 +143,43 @@
             }
 
         }
-        public function likes_comments(){
+        public function likes(){
+            if(isset($_POST['postId']) || isset($_POST['like']) )
+            {
+                $data = [
+                    'user_id'=> trim($_SESSION['user_id']),
+                    'postId' => $_POST['postId'],
+                    'like'=> $_POST['like']
+                ];
+                if (!$this->postModel->findLikesByUserId($data['user_id'],$data['postId']) && $data['like'] == "1" ) {
+                    $this->postModel->addLike($data);
+                }
+                if ($this->postModel->findLikesByUserId($data['user_id'],$data['postId']) && $data['like'] == "-1" ) {
+                    $this->postModel->removeLike($data);
+                }
+                    
+            }
             
+
+        }
+        public function comments(){
+            if(isset($_POST['post_comment'])  )
+            {
+                echo $_POST['post_comment'];
+                $data = [
+                    'user_id'=> trim($_SESSION['user_id']),
+                    'postId' => trim($_POST['postId']),
+                    'message'=> trim($_POST['post_comment'])
+                ];
+                // if (!$this->postModel->findLikesByUserId($data['user_id'],$data['postId']) && $data['like'] == "1" ) {
+                     $this->postModel->addMessage($data);
+                     
+                // }
+                // if ($this->postModel->findLikesByUserId($data['user_id'],$data['postId']) && $data['like'] == "-1" ) {
+                //     $this->postModel->removeLike($data);
+                // }
+                    
+            }
             
 
         }

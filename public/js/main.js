@@ -61,132 +61,85 @@
             });
         }
     };
+    var like_button = document.getElementsByClassName('like-button');
+    var i = like_button.length;
+     while (i--)
+        like_button[i].addEventListener("click", likeButton);
+    function likeButton() {
+       // var like = 0;
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost/camagru/posts/likes', true);
+        // form data is sent appropriately as a POST request
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onreadystatechange = function () {
+          if(xhr.readyState == 4 && xhr.status == 200) {
+            var result = xhr.responseText;
+            console.log('Result: ' + result);
+          }
+        };
+        var like_count=document.getElementById(this.value);
+        var counter = parseInt(like_count.innerText); 
+        var like;
+        if (this.innerText === "UnLike") {
+            this.innerText="Like";
+            like_count.innerText = counter -=1;
+            like="-1";
+        }else{
+            this.innerText="UnLike";
+            like_count.innerText = counter +=1;
+            like="1";
+        }
+           
+        xhr.send("like="+like+"&&postId="+this.value);
 
-    // $(document).ready(function(){
-	// 	// when the user clicks on like
-	// 	$('.like').on('click', function(){
-	// 		var postid = $(this).data('id');
-	// 		    $post = $(this);
-
-	// 		$.ajax({
-	// 			url: '../views/posts/index.php',
-	// 			type: 'post',
-	// 			data: {
-	// 				'liked': 1,
-	// 				'postid': postid
-	// 			},
-	// 			success: function(response){
-	// 				$post.parent().find('span.likes_count').text(response + " likes");
-	// 				$post.addClass('hide');
-	// 				$post.siblings().removeClass('hide');
-	// 			}
-	// 		});
-	// 	});
-
-	// 	// when the user clicks on unlike
-	// 	$('.unlike').on('click', function(){
-	// 		var postid = $(this).data('id');
-	// 	    $post = $(this);
-
-	// 		$.ajax({
-	// 			url: '../views/posts/index.php',
-	// 			type: 'post',
-	// 			data: {
-	// 				'unliked': 1,
-	// 				'postid': postid
-	// 			},
-	// 			success: function(response){
-	// 				$post.parent().find('span.likes_count').text(response + " likes");
-	// 				$post.addClass('hide');
-	// 				$post.siblings().removeClass('hide');
-	// 			}
-	// 		});
-	// 	});
-    // });
-        
-    // $(document).ready(function(){
-
-    //     // if the user clicks on the like button ...
-    //     $('.like-btn').on('click', function(){
-    //       var post_id = $(this).data('id');
-    //       $clicked_btn = $(this);
-    //       if ($clicked_btn.hasClass('fa-thumbs-o-up')) {
-    //           action = 'like';
-    //       } else if($clicked_btn.hasClass('fa-thumbs-up')){
-    //           action = 'unlike';
-    //       }
-    //       $.ajax({
-    //           url: 'index.php',
-    //           type: 'post',
-    //           data: {
-    //               'action': action,
-    //               'post_id': post_id
-    //           },
-    //           success: function(data){
-    //               res = JSON.parse(data);
-    //               if (action == "like") {
-    //                   $clicked_btn.removeClass('fa-thumbs-o-up');
-    //                   $clicked_btn.addClass('fa-thumbs-up');
-    //               } else if(action == "unlike") {
-    //                   $clicked_btn.removeClass('fa-thumbs-up');
-    //                   $clicked_btn.addClass('fa-thumbs-o-up');
-    //               }
-    //               // display the number of likes and dislikes
-    //               $clicked_btn.siblings('span.likes').text(res.likes);
-    //               $clicked_btn.siblings('span.dislikes').text(res.dislikes);
-        
-    //               // change button styling of the other button if user is reacting the second time to post
-    //               $clicked_btn.siblings('i.fa-thumbs-down').removeClass('fa-thumbs-down').addClass('fa-thumbs-o-down');
-    //           }
-    //       });		
-        
-    //     });
-        
-    //     // if the user clicks on the dislike button ...
-    //     $('.dislike-btn').on('click', function(){
-    //       var post_id = $(this).data('id');
-    //       $clicked_btn = $(this);
-    //       if ($clicked_btn.hasClass('fa-thumbs-o-down')) {
-    //           action = 'dislike';
-    //       } else if($clicked_btn.hasClass('fa-thumbs-down')){
-    //           action = 'undislike';
-    //       }
-    //       $.ajax({
-    //           url: 'index.php',
-    //           type: 'post',
-    //           data: {
-    //               'action': action,
-    //               'post_id': post_id
-    //           },
-    //           success: function(data){
-    //               res = JSON.parse(data);
-    //               if (action == "dislike") {
-    //                   $clicked_btn.removeClass('fa-thumbs-o-down');
-    //                   $clicked_btn.addClass('fa-thumbs-down');
-    //               } else if(action == "undislike") {
-    //                   $clicked_btn.removeClass('fa-thumbs-down');
-    //                   $clicked_btn.addClass('fa-thumbs-o-down');
-    //               }
-    //               // display the number of likes and dislikes
-    //               $clicked_btn.siblings('span.likes').text(res.likes);
-    //               $clicked_btn.siblings('span.dislikes').text(res.dislikes);
-                  
-    //               // change button styling of the other button if user is reacting the second time to post
-    //               $clicked_btn.siblings('i.fa-thumbs-up').removeClass('fa-thumbs-up').addClass('fa-thumbs-o-up');
-    //           }
-    //       });	
-        
-    //     });
-        
-    //     });
-    const Likebtn = document.getElementsByClassName('likes');
-
-    window.addEventListener('load',function(e){
-        document.querySelector('like-btn').addEventListener('click', function() {
-
-            console.log("clicked");
-            e.preventDefault();
-
-        
+    }
+    var post_comment = document.getElementById('post_comment').addEventListener('click', function(e){
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost/camagru/posts/comments', true);
+        // form data is sent appropriately as a POST request
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onreadystatechange = function () {
+          if(xhr.readyState == 4 && xhr.status == 200) {
+            var result = xhr.responseText;
+            console.log('Result: ' + result);
+          }
+        };
+        //empty comment box
+        var message = document.getElementById('message').value;
+       // var counter = parseInt(like_count.innerText); 
+       document.getElementById('message').value = "";
+       var commentBox = document.getElementById('commentBox');
+       var user_Id = document.getElementById('user_name').innerText;
+       var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var dateTime = date+' '+time;
+       console.log(user_Id);
+       console.log(dateTime);
+       var html = '<h5 class="h5 text-left">'+user_Id+'</h5><h6 class="h6 g-color-gray-dark-v1 mb-0 text-left">'+ dateTime + '</h6><div class=" card card-body text-left mb-3"><span>'+message+'</span></div>';
+       var comments =commentBox.innerHTML;
+       commentBox.innerHTML = html + comments;
+        xhr.send("post_comment="+message+"&&postId="+this.value);
     })
-})
+    // .addEventListener("click", postcomment);
+    // function postcomment() {
+        // var like = 0;
+        //  var xhr = new XMLHttpRequest();
+        //  xhr.open('POST', 'http://localhost/camagru/posts/comments', true);
+        //  // form data is sent appropriately as a POST request
+        //  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        //  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        //  xhr.onreadystatechange = function () {
+        //    if(xhr.readyState == 4 && xhr.status == 200) {
+        //      var result = xhr.responseText;
+        //      console.log('Result: ' + result);
+        //    }
+        //  };
+        //  var message = document.getElementById("message").innerText;
+        // // var counter = parseInt(like_count.innerText); 
+        //     console.log(message);
+        //  xhr.send("post_comment="+message+"&&postId="+this.value);
+
+   //  }
