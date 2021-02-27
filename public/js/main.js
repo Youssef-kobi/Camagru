@@ -1,3 +1,4 @@
+const URLROOT = 'http://192.168.99.116';
 
     function displayMenu(event) {
         if (document.getElementById("navbar-list").classList.contains("show")) {
@@ -68,7 +69,7 @@
     function likeButton() {
        // var like = 0;
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost/camagru/posts/likes', true);
+        xhr.open('POST', URLROOT+'/posts/likes', true);
         // form data is sent appropriately as a POST request
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -96,7 +97,7 @@
     }
     var post_comment = document.getElementById('post_comment').addEventListener('click', function(e){
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost/camagru/posts/comments', true);
+        xhr.open('POST', URLROOT+'/posts/comments', true);
         // form data is sent appropriately as a POST request
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
