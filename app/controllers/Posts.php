@@ -16,8 +16,6 @@
                 'posts' => $posts
                 //'comments' => $comments
             ];
-
-
             $this->view('posts/index',$data);
         }
         public function add(){

@@ -14,6 +14,7 @@ class Users extends Controller{
                 'email' => trim($_POST['email']),
                 'password' => trim($_POST['password']),
                 'confirm_password' => trim($_POST['confirm_password']),
+                'vKey'=> md5(time().trim($_POST['username'])),
                 'username_err' => '',
                 'email_err' => '',
                 'password_err' => '',
@@ -57,6 +58,13 @@ class Users extends Controller{
                 $data['password'] = password_hash($data['password'],PASSWORD_DEFAULT);
                 // register User
                 if($this->userModel->register($data)){
+                    $vEmail = [
+                    'email' => $data['email'],
+                    'subject' => "Verification email",
+                    'message' => "<a href='http://localhost/camagru/users/register?vKey=$vKey'>Register Account</a>",
+                    'headers' => "From: \r\n"."MIME-Version: 1.0 \r\n"."Content-type:text/html;charset=UTF-8 \r\n",
+                    ];
+                    mail($vEmail['email'],$vEmail['subject'],$vEmail['message'],$vEmail['headers']);
                     flash('register_success','You are registered and can log in');
                     redirect('users/login');
                 }else {

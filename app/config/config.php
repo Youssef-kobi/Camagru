@@ -7,6 +7,6 @@ define('DB_NAME','camagru');
 //App Root
 define('APPROOT',dirname(dirname(__FILE__)));
 // URL ROOT
-define ('URLROOT','http://192.168.99.116');
+define ('URLROOT','http://localhost');
 //site name
 define('SITENAME','Camagru');

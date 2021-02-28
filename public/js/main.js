@@ -1,4 +1,4 @@
-const URLROOT = 'http://192.168.99.116';
+const URLROOT = 'http://localhost';
 
     function displayMenu(event) {
         if (document.getElementById("navbar-list").classList.contains("show")) {
