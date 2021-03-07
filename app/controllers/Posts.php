@@ -158,11 +158,23 @@
                     // if everything is ok, try to upload file
                     } else {
                     if (move_uploaded_file($_FILES["file"]["tmp_name"], $filepath)) {
-                        $data['img'] = imageCreateFromPng($data['img']);
+                        switch ($imageFileType) {
+                            case 'jpg':
+                                $data['img'] = imagecreatefromjpeg($data['img']);
+                            break;
+                            case 'jpeg':
+                                $data['img'] = imagecreatefromjpeg($data['img']);
+                                break;
+                            case 'png':
+                                $data['img']= imagecreatefrompng($data['img']);
+                                break;
+                            default:
+                            $data['img'] = false;
+                                break;
+                        }
+
                         $data['sticker']= imageCreateFromPng(str_replace( URLROOT."/public",'.',$data['sticker']));
-                       // $data['sticker'] = imageCreateFromPng($data['sticker']);
-                        //str_replace("..", URLROOT ,$data['img']);
-                        //echo $data['img'];
+         
                         imagecopymerge($data['img'],$data['sticker'],600,400,0,0,100,100,100);
                        // imagepng($data['img']);
                         $data['path'] = $upload_dir.time().".png";
@@ -210,8 +222,10 @@
 
         }
         public function comments(){
-            if(isset($_POST['post_comment'])  )
+            
+            if(isset($_POST['post_comment']))
             {
+                $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
                 $data = [
                     'user_id'=> trim($_SESSION['user_id']),
                     'postId' => trim($_POST['postId']),
@@ -219,12 +233,13 @@
                     'message'=> trim($_POST['post_comment'])
 
                 ];
+                if (!empty($data['message'])) {
                 //var_dump ($this->postModel->isnotify($data['user_id']));
                 if (($this->postModel->isnotify($data['user_id'])->notification) == 1) {
                     $vEmail = [
                         'email' => $this->postModel->getEmailPostCreator($data['postId'])->email,
                         'subject' => "Comment notification",
-                        'message' => "<a href='http://localhost/posts/'>Check posts for your comment</a>",
+                        'message' => "<a href='".URLROOT."/posts/'>Check posts for your comment</a>",
                         'headers' => "From:youssef.kobi \r\n"."MIME-Version: 1.0 \r\n"."Content-type:text/html;charset=UTF-8 \r\n",
                         ];
                         //die($vEmail['email']);
@@ -232,7 +247,7 @@
                     
                 }
                 $this->postModel->addMessage($data);
-                    
+                }   
             }
             
 

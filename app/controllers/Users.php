@@ -46,8 +46,8 @@ class Users extends Controller{
             //Password Validation
             if (empty($data['password'])) {
                 $data['password_err'] = 'Please enter a Password';
-            }elseif (strlen($data['password']) < 6   ) {
-                $data['password_err'] = 'Password must be at least 6 characters'; 
+            }elseif (strlen($data['password']) < 6  || (strtolower($data['password']) == $data['password']) ) {
+                $data['password_err'] = 'Password must be at least 6 characters and have at least an upper case'; 
             }
 
             //Password confirmation Validation
@@ -68,7 +68,7 @@ class Users extends Controller{
                     $vEmail = [
                     'email' => $data['email'],
                     'subject' => "Verification email",
-                    'message' => "<a href='http://localhost/users/login?vKey=".$data['vKey']."&"."username=".$data['username']."'>Register Account</a>",
+                    'message' => "<a href='".URLROOT."/users/login?vKey=".$data['vKey']."&"."username=".$data['username']."'>Register Account</a>",
                     'headers' => "From:youssef.kobi \r\n"."MIME-Version: 1.0 \r\n"."Content-type:text/html;charset=UTF-8 \r\n",
                     ];
                     mail($vEmail['email'],$vEmail['subject'],$vEmail['message'],$vEmail['headers']);

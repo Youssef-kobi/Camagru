@@ -1,7 +1,0 @@
-apt update -y && apt upgrade -y
-edit /etc/hosts for senmail
-sendmailconfig
-chmod -R + /var/lib/mysql*
-chmod -R +r /var/lib/mysql*
-emacs /etc/apache2/apache2.config  ==> multiviews all
-apt install php7.4-gd

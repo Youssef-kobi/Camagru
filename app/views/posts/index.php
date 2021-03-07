@@ -54,8 +54,7 @@
                                             <h5 class="h5 text-left"><?php echo $comment->username;?></h5>
                                             <h6 class="h6 text-left" ><?php echo $comment->created_at;?> </h6>  
                                             <div class=" card card-body text-left mb-1"><span><?php  echo $comment->comment?></span></div>
-                                    
-                                            
+
                                     <?php endforeach;?> 
                                     </div>
                                 </div>
