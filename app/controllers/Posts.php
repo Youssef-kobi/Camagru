@@ -3,24 +3,61 @@
 
         public function __construct() {
             
-            if (!isLoggedIn()) {
-                redirect('users/login');
-            }
-            $this->postModel = $this->model('post');;
+            $this->postModel = $this->model('Post');;
         }
-        public function index(){
-            //Get posts
-            $posts = $this->postModel->getPosts();
+            public function index(){
+                $data = [
+                    'posts' => '',
+                    'currentPage'=> '',
+                    'total'=>'',
+                    'limit'=> '',
+                    'total'=>'',
+                    'first_post'=> '',
+                    'offset'=>'',
+                    'page'=>''
+
+
+                    //'comments' => $comments
+                ];
+                // On détermine sur quelle page on se trouve
+                if(isset($_GET['page']) && !empty($_GET['page'])){
+                    $data['currentPage'] = (int) strip_tags($_GET['page']);
+                }else{
+                    $data['currentPage'] = 1;
+                }
+                // //Get posts
+                // $posts = $this->postModel->getPosts();
+
+                // Find out how many items are in the table
+                $data['total'] =$this->postModel->totalPosts();
+                // How many items to list per page
+                $data['limit'] = 5;
+            
+                $data['first_post'] = ($data['currentPage'] * $data['limit']) - $data['limit'];
+                // How many pages will there be
+                $data['pages'] = ceil($data['total'] / $data['limit']);
+                
+                //echo ($data['pages']);
+                // What page are we currently on?
+                $data['page'] = min($data['pages'], filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, array(
+            'options' => array(
+                'default'   => 1,
+                'min_range' => 1,
+            ),
+              )));
+            // Calculate the offset for the query
+            $data['offset'] = ($data['page'] - 1)  * ($data['limit']);
            // $comments = $this->postModel->getMessages();
-            $data = [
-                'posts' => $posts
-                //'comments' => $comments
-            ];
+          $data['posts'] = $this->postModel->getPosts($data);
             $this->view('posts/index',$data);
-        }
+    }
         public function add(){
+            if (!isLoggedIn()) {
+                    redirect('users/login');
+                }
             
             if($_SERVER['REQUEST_METHOD'] == 'POST'){
+                $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
                 if ($_POST['form'] === "A") {
                     $upload_dir = "../public/img/uploads/";
                     $data = [
@@ -31,16 +68,30 @@
                         'path' => ""
                     ];
                     //upload image to server
-                    
+                    //die ($_POST['sticker']);
                     $data['img'] = str_replace('data:image/png;base64,', '', $data['img']);
                     $data['img'] = str_replace(' ', '+', $data['img']);
-                    // Sanitaze POST ARRAY
-                    //$_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
-                    // echo $data['img'];
                     $data['img'] = base64_decode($data['img']);
                     $data['img'] = imagecreatefromstring($data['img']);
-                    //echo $data['sticker'];
-                    $data['sticker'] = imageCreateFromPng($data['sticker']);
+                   // die ($data['sticker']);
+                    $data['sticker'] = imagecreatefrompng(str_replace( URLROOT."/public",'.',$data['sticker']));
+                    //phpinfo();
+                    //die ($data['sticker']);
+                    
+                    switch ($data['filter']) {
+                        case 'grayscale(100%)':
+                            $data['filter']= IMG_FILTER_GRAYSCALE;
+                            break;
+                        case 'invert(100%)':
+                            $data['filter']= IMG_FILTER_NEGATE;
+                            break;
+                        default:
+                        $data['filter']= null;
+                            break;
+                    }
+                   if (isset($data['filter'])) {
+                        imagefilter($data['img'], $data['filter']);
+                   }
                     imagecopymerge($data['img'],$data['sticker'],600,400,0,0,100,100,100);
                     
                     $data['path'] = $upload_dir.time().".png";
@@ -108,11 +159,11 @@
                     } else {
                     if (move_uploaded_file($_FILES["file"]["tmp_name"], $filepath)) {
                         $data['img'] = imageCreateFromPng($data['img']);
-                        $data['sticker']= imageCreateFromPng($data['sticker']);
+                        $data['sticker']= imageCreateFromPng(str_replace( URLROOT."/public",'.',$data['sticker']));
                        // $data['sticker'] = imageCreateFromPng($data['sticker']);
                         //str_replace("..", URLROOT ,$data['img']);
                         //echo $data['img'];
-                        imagecopymerge($data['img'],$data['sticker'],300,200,0,0,100,100,100);
+                        imagecopymerge($data['img'],$data['sticker'],600,400,0,0,100,100,100);
                        // imagepng($data['img']);
                         $data['path'] = $upload_dir.time().".png";
                     if (imagepng($data['img'],$data['path'])) {
@@ -126,9 +177,6 @@
                     }else {
                         die('Something went wrong');
                     }
-                        //echo "<img src=".$data['img']." height=200 width=300 />";
-                       // $this->view('posts/add',$data);
-                        // echo "The file ". htmlspecialchars( basename( $_FILES["file"]["name"])). " has been uploaded.";
                     } else {
                         echo "Sorry, there was an error uploading your file.";
                     }
@@ -142,6 +190,7 @@
 
         }
         public function likes(){
+            
             if(isset($_POST['postId']) || isset($_POST['like']) )
             {
                 $data = [
@@ -163,23 +212,40 @@
         public function comments(){
             if(isset($_POST['post_comment'])  )
             {
-                echo $_POST['post_comment'];
                 $data = [
                     'user_id'=> trim($_SESSION['user_id']),
                     'postId' => trim($_POST['postId']),
+                    'post_username' => '',
                     'message'=> trim($_POST['post_comment'])
+
                 ];
-                // if (!$this->postModel->findLikesByUserId($data['user_id'],$data['postId']) && $data['like'] == "1" ) {
-                     $this->postModel->addMessage($data);
-                     
-                // }
-                // if ($this->postModel->findLikesByUserId($data['user_id'],$data['postId']) && $data['like'] == "-1" ) {
-                //     $this->postModel->removeLike($data);
-                // }
+                //var_dump ($this->postModel->isnotify($data['user_id']));
+                if (($this->postModel->isnotify($data['user_id'])->notification) == 1) {
+                    $vEmail = [
+                        'email' => $this->postModel->getEmailPostCreator($data['postId'])->email,
+                        'subject' => "Comment notification",
+                        'message' => "<a href='http://localhost/posts/'>Check posts for your comment</a>",
+                        'headers' => "From:youssef.kobi \r\n"."MIME-Version: 1.0 \r\n"."Content-type:text/html;charset=UTF-8 \r\n",
+                        ];
+                        //die($vEmail['email']);
+                       mail($vEmail['email'],$vEmail['subject'],$vEmail['message'],$vEmail['headers']);
+                    
+                }
+                $this->postModel->addMessage($data);
                     
             }
             
 
+        }
+        public function delete(){
+            if(isset($_POST['deleteId'])){
+                $data = [
+                'user_id'=> trim($_SESSION['user_id']),
+                'postId' => $_POST['deleteId']
+            ];
+            $this->postModel->delete_post($data);
+            }
+            
         }
     }
 ?>

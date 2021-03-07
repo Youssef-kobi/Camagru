@@ -4,9 +4,10 @@
 
         public function __construct() {
           $this->db = new Database;
+          new setup;
     }
 
-    public function getPosts(){
+    public function getPosts($data){
         $this->db->query('SELECT *,
                         posts.id as postId,
                         users.id as userId,
@@ -16,12 +17,20 @@
                         INNER JOIN users
                         ON posts.user_id = users.id
                         ORDER BY posts.created_at DESC
-
+                        LIMIT :first_post , :limit
+                        ');
+            $this->db->bind(':first_post', $data['first_post']);
+            $this->db->bind(':limit',$data['limit']);
+        $results = $this->db->resultSet();
+        return $results;
+    }
+    public function totalPosts(){
+        $this->db->query('SELECT *
+                        FROM posts
                         ');
 
         $results = $this->db->resultSet();
-        return $results;
-        //print_r($results);
+        return $this->db->rowCount();
     }
     public function addPost($data)
     {
@@ -35,8 +44,20 @@
                 return true;
             }else {
                 return false;
-            }
-            
+            }   
+    }
+    public function delete_post($data)
+    {
+        $this->db->query('DELETE FROM posts WHERE id =:post_id');
+            //Binding Values
+
+            $this->db->bind(':post_id',$data['postId']);
+            //execute
+            if($this->db->execute()){
+                return true;
+            }else {
+                return false;
+            }   
     }
             // find user by Username
     public function findLikesByUserId($user_id,$post_id){
@@ -56,7 +77,30 @@
             return false;   
         }
     }
+    public function getEmailPostCreator($post_id){
 
+        $this->db->query('SELECT email
+                        FROM posts
+                        INNER JOIN users
+                        ON posts.user_id = users.id
+                        WHERE posts.id = :post_id');
+        $this->db->bind(':post_id',$post_id);
+        
+        $row = $this->db->single();
+        // check row 
+        return $row;
+    }
+
+    public function isnotify($user_id){
+        $this->db->query('SELECT *
+        FROM users
+        WHERE id = :user_id');
+        $this->db->bind(':user_id',$user_id);
+
+        $row = $this->db->single(); 
+        return $row;
+
+    }
     public function getLikes($post_id)
     {
         $this->db->query('SELECT *,

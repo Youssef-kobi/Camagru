@@ -17,6 +17,7 @@ class Database{
 
     public function __construct()
     {
+
         //set DSN
         $dsn = 'mysql:host=' . $this->host . ';dbname='. $this->dbname;
         $options = array(
@@ -27,6 +28,7 @@ class Database{
         // Create PDO instance 
         try {
             $this->dbh = new PDO($dsn,$this->user,$this->pass,$options);
+            
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
             echo $this->error;

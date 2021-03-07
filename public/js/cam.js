@@ -42,8 +42,8 @@ navigator.mediaDevices.getUserMedia({video: true, audio: false})
             // Set video //canvas height
             height= video.videoHeight / (video.videoWidth / width);
 
-            video.setAttribute('width',width);
-            video.setAttribute('height',height);
+            // video.setAttribute('width',width);
+            // video.setAttribute('height',height);
             canvas.setAttribute('width',width);
             canvas.setAttribute('height',height);
             streaming = true;
@@ -90,9 +90,9 @@ navigator.mediaDevices.getUserMedia({video: true, audio: false})
         // }
         sticker_preview.src = uploadSticker_src;
         sticker_preview.style.position = "absolute";
-        sticker_preview.style.bottom = "3vh";
-        sticker_preview.style.right = "3vh";
-        sticker_preview.style.width = "5vh";
+        sticker_preview.style.bottom = "20px";
+        sticker_preview.style.right = "20px";
+        sticker_preview.style.width = "10%";
         e.preventDefault();
         document.getElementById('sticker_uploads').value = uploadSticker_src;
         document.getElementById('filter_uploads').value = filter;
@@ -123,11 +123,7 @@ navigator.mediaDevices.getUserMedia({video: true, audio: false})
         if (checkedSticker_src) {
             photoButton.disabled = false;
         }
-        videosSticker.style.position = "absolute";
         videosSticker.setAttribute('src',checkedSticker_src);
-        videosSticker.style.bottom = "10vh";
-        videosSticker.style.right = "30vh";
-        videosSticker.style.width = "10vh";
         video.style.filter = filter;
         e.preventDefault();
     })
@@ -186,9 +182,9 @@ navigator.mediaDevices.getUserMedia({video: true, audio: false})
             // position sticker 
            // img.style.position = "relative";
             sticker.style.position = "absolute";
-            sticker.style.bottom = "3vh";
-            sticker.style.right = "3vh";
-            sticker.style.width = "5vh";
+            sticker.style.bottom = "20%";
+            sticker.style.right = "20%";
+            sticker.style.width = "10%";
 
             // Set img filter
             img.style.filter = filter;

@@ -73,21 +73,15 @@ const URLROOT = 'http://localhost';
         // form data is sent appropriately as a POST request
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onreadystatechange = function () {
-          if(xhr.readyState == 4 && xhr.status == 200) {
-            var result = xhr.responseText;
-            console.log('Result: ' + result);
-          }
-        };
         var like_count=document.getElementById(this.value);
         var counter = parseInt(like_count.innerText); 
         var like;
-        if (this.innerText === "UnLike") {
+        if (this.innerText === "Dislike") {
             this.innerText="Like";
             like_count.innerText = counter -=1;
             like="-1";
         }else{
-            this.innerText="UnLike";
+            this.innerText="Dislike";
             like_count.innerText = counter +=1;
             like="1";
         }
@@ -95,52 +89,44 @@ const URLROOT = 'http://localhost';
         xhr.send("like="+like+"&&postId="+this.value);
 
     }
-    var post_comment = document.getElementById('post_comment').addEventListener('click', function(e){
+var post_comment = document.getElementsByClassName('post_comment');
+    var k = post_comment.length;
+    while (k--)
+        post_comment[k].addEventListener('click', function(e){
         var xhr = new XMLHttpRequest();
         xhr.open('POST', URLROOT+'/posts/comments', true);
         // form data is sent appropriately as a POST request
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onreadystatechange = function () {
-          if(xhr.readyState == 4 && xhr.status == 200) {
-            var result = xhr.responseText;
-            console.log('Result: ' + result);
-          }
-        };
         //empty comment box
-        var message = document.getElementById('message').value;
+        var message = document.getElementById('message='+this.value).value;
        // var counter = parseInt(like_count.innerText); 
-       document.getElementById('message').value = "";
-       var commentBox = document.getElementById('commentBox');
+       document.getElementById('message='+this.value).value = "";
+       var commentBox = document.getElementById('commentBox='+this.value);
        var user_Id = document.getElementById('user_name').innerText;
        var today = new Date();
         var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
         var dateTime = date+' '+time;
-       console.log(user_Id);
-       console.log(dateTime);
        var html = '<h5 class="h5 text-left">'+user_Id+'</h5><h6 class="h6 g-color-gray-dark-v1 mb-0 text-left">'+ dateTime + '</h6><div class=" card card-body text-left mb-3"><span>'+message+'</span></div>';
        var comments =commentBox.innerHTML;
        commentBox.innerHTML = html + comments;
         xhr.send("post_comment="+message+"&&postId="+this.value);
-    })
-    // .addEventListener("click", postcomment);
-    // function postcomment() {
-        // var like = 0;
-        //  var xhr = new XMLHttpRequest();
-        //  xhr.open('POST', 'http://localhost/camagru/posts/comments', true);
-        //  // form data is sent appropriately as a POST request
-        //  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        //  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        //  xhr.onreadystatechange = function () {
-        //    if(xhr.readyState == 4 && xhr.status == 200) {
-        //      var result = xhr.responseText;
-        //      console.log('Result: ' + result);
-        //    }
-        //  };
-        //  var message = document.getElementById("message").innerText;
-        // // var counter = parseInt(like_count.innerText); 
-        //     console.log(message);
-        //  xhr.send("post_comment="+message+"&&postId="+this.value);
-
-   //  }
+    });
+   var delete_Post = document.getElementsByClassName('deletePost');
+    var j = delete_Post.length;
+     while (j--)
+     delete_Post[j].addEventListener("click", deletepost);
+        function deletepost() {
+            // var like = 0;
+             var xhr = new XMLHttpRequest();
+             xhr.open('POST', URLROOT+'/posts/delete', true);
+             // form data is sent appropriately as a POST request
+             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+             var deleted = document.getElementById('Full_Post='+this.value);
+             deleted.remove();
+                
+             xhr.send("deleteId="+this.value);
+             console.log('Full_Post='+this.value);
+         }

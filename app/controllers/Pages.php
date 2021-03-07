@@ -3,14 +3,14 @@ class Pages extends Controller{
     public function __construct(){
     }
     public function index(){
-        if (isLoggedIn()) {
+     //   if (isLoggedIn()) {
             redirect('posts');
-        }
-        $data = [
-            'title' => 'Welcome',
-        ];
+   //     }
+        // $data = [
+        //     'title' => 'Welcome',
+        // ];
         
-        $this->view('pages/index',$data);
+        // $this->view('pages/index',$data);
 
     }
     public function about(){

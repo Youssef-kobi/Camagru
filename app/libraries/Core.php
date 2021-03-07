@@ -4,6 +4,11 @@
     this is for creating urls  and load core controller
     URL FORMAT - /controller/method/params 
     */
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+
     class Core{
 
         protected $currentController = 'Pages';

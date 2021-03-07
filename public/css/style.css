@@ -14,18 +14,18 @@ body{
 #photos img{
 width: 100%;
 }
-.sticker_css{
+/* .sticker_css{
   display: grid;
   grid-template-columns: repeat(4,1fr);
   gap: 10px;
-}
- .sticker_css img{
-  width: 100%;
-} 
-#sidebar {
+} */
+ /* .sticker_css img{
+  width: 10%;
+}  */
+/* #sidebar {
     width: 30%;
     margin: 0%;
-  }
+  } */
 .main{
    width: 70%;
    margin: 0%;
@@ -36,11 +36,7 @@ width: 100%;
  }
 
 .buttons{
-    display: grid;
-    grid-template-columns: (3,1fr);
-    margin-right: 30%;
-    margin-left: 30%;
- 
+    display: grid; 
  }
 #video{
     width: 100%;

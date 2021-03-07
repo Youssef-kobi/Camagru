@@ -9,8 +9,9 @@
 class Controller{
      //load model
     public function model($model){
-        // require model files ?? doesnt that needs to be checked first ? oO
+        
         require_once '../app/models/' . $model . '.php';
+        require_once '../app/config/setup.php';
         //instantiate model
         return new $model();
     }
